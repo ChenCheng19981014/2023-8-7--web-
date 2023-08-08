@@ -133,6 +133,7 @@ export default {
   width: 383px;
   color: #fff;
   background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(7px);
 
   .content {
     width: 100%;

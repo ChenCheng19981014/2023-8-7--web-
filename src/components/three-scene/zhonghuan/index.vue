@@ -808,12 +808,12 @@ export default {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  font-family: "pm";
 
   > .top {
     width: 137px;
     height: 38px;
     font-size: 20px;
-    font-family: "pm";
     background-image: url("./../../../assets/three-scene/door-top.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;

@@ -151,6 +151,7 @@ export default {
   color: #fff;
   background: rgba(0, 0, 0, 0.2);
   position: absolute;
+  backdrop-filter: blur(7px);
 
   .content {
     width: 100%;
