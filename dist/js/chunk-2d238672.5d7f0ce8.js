@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d238672"],{feda:function(c,n,t){"use strict";t.r(n);var l=function(){var c=this,n=c._self._c;return n("button",{on:{click:c.click}},[c._v("点击")])},e=[],i=t("491d"),o={methods:{click:function(){Object(i["c"])("displaySafeDialog","一號大樓")}}},u=o,a=t("2877"),s=Object(a["a"])(u,l,e,!1,null,null,null);n["default"]=s.exports}}]);
+//# sourceMappingURL=chunk-2d238672.5d7f0ce8.js.map
