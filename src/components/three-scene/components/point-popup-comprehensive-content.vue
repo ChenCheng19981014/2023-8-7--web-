@@ -147,6 +147,7 @@ export default {
         justify-content: flex-start;
         align-items: end;
         font-family: "number";
+        font-weight: 700;
 
         > span {
         }

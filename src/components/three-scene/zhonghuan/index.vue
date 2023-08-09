@@ -802,37 +802,38 @@ export default {
 }
 
 .door_sprite {
-  width: 137px;
   z-index: 3;
   position: absolute;
   display: flex;
   justify-content: center;
   flex-direction: column;
-  font-family: "pm";
 
   > .top {
-    width: 137px;
+    padding: 9px 30px;
     height: 38px;
-    font-size: 20px;
     background-image: url("./../../../assets/three-scene/door-top.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
     display: flex;
     justify-content: center;
     align-items: center;
+    > div {
+      font-size: 20px;
+      font-weight: 400;
+      font-family: "pm" !important;
+    }
   }
 
   .bottom {
     margin-top: 5px;
     width: 137px;
-    height: 26px;
     display: flex;
     justify-content: center;
     align-items: center;
 
     > div {
       width: 34px;
-      height: 26px;
+      height: 20px;
       background-image: url("./../../../assets/three-scene/door-content.png");
       background-size: 100% 100%;
       background-repeat: no-repeat;
