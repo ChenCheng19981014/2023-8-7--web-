@@ -68,15 +68,17 @@ export default {
       };
     },
     openDialog() {
-      // 显示 杨yim 弹框
+      // 显示 杨一鸣 弹框
       $send("displaySafeDialog", this.id);
+
+      $send("displaySafeDialogUe", this.id);
 
       // 调用父类功能
       this.$emit("buildDetails", this.id);
 
-      $send("displaySafeDialogUe", this.id);
+      // this.id = "";
 
-      this.id = "";
+      this.isShow = false;
     },
   },
 };

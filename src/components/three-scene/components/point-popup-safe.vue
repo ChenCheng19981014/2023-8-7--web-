@@ -123,10 +123,10 @@ export default {
             icon: require("./../../../assets/three-scene/three-car-icon.png"),
             realTimeTile: "实时出入车辆",
             arrInfo: [
-              { key: "入园人数", value: "num", value: 525, unit: "个" },
-              { key: "员工", value: "staff", value: 951, unit: "个" },
-              { key: "预约", value: "reservation", value: 10, unit: "个" },
-              { key: "临时", value: "temporary", value: 1, unit: "个" },
+              { key: "入园车辆", value: "num", value: 525, unit: "辆" },
+              { key: "员工", value: "staff", value: 951, unit: "辆" },
+              { key: "预约", value: "reservation", value: 10, unit: "辆" },
+              { key: "临时", value: "temporary", value: 1, unit: "辆" },
             ],
             realTimeArr: [
               {

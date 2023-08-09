@@ -8,7 +8,6 @@
       <div class="frame" v-show="cameraInfo.src">
         <video
           ref="camera-video"
-          cl
           ass="camera-video"
           :src="cameraInfo.src"
           autoplay="true"
@@ -40,6 +39,8 @@ export default {
   watch: {
     id() {
       this.loadData();
+
+      console.log(this.id, "this.id");
     },
   },
   // 点位弹窗

@@ -130,13 +130,14 @@ const fn = (runScene, inputData = {}, constant = {}) => {
         // 前端  点击显示对应看板 倒三角 能源看板
         $on("web-click-energy", this.webClickEnergy.bind(this));
 
-
         // 后加
         $on('clickSafeModel', this.clickSafeModel.bind(this));
 
         // 后加
         $on('clickParking', this.clickParking.bind(this));
 
+        // 详情刷新
+        $on('refreshSafeOtherPosition', this.detailsRefreshSafeOtherPosition.bind(this))
       }
       //---------------------能源-----------------------------------
 
@@ -297,8 +298,8 @@ const fn = (runScene, inputData = {}, constant = {}) => {
 
       // 点击 安防模型
       clickSafeModel(name) {
-
         if (!this.modelDoor.includes(name)) return;
+
 
         // 清空之前的数据
         core.camera.closeSprite();
@@ -306,28 +307,28 @@ const fn = (runScene, inputData = {}, constant = {}) => {
         // 清除 上个墙
         core.areaLight.showLight('', true);
 
+        // 清除上个快照
+        $send("clear-last-snapShot");
+
         // 点击安防大楼
         this.safeDoor(name);
 
         // 清除倒三角
         $send('close-topCard')
 
-        // 清除上个快照
-        $send("clear-last-snapShot");
       }
 
       // 点击  安防 大门
       safeDoor(name) {
         this.lastSafeDoorModel = getModel(name);
 
+        // 显示隐藏
+        $send("show-safe-info", true);
+
         // 转换位置
         Utils.getMacro(() => {
-
           // 更新 安防大门id
           $send("updatesSafeDoorId", name);
-
-          // 显示隐藏
-          $send("show-safe-info", true);
 
           // 刷新一帧
           this.refreshSafeDoorPosition({
@@ -373,7 +374,7 @@ const fn = (runScene, inputData = {}, constant = {}) => {
 
           // 更新安防 id
           $send("updatesSafeOtherId", name);
-        }, 200);
+        }, 0);
 
         console.log("safe-other:", name);
       }
@@ -385,6 +386,12 @@ const fn = (runScene, inputData = {}, constant = {}) => {
         const { left: x, top: y } = core.events.get2DVec(map);
         const ps = { x, y };
         this.setPosition(safeOtherDom, ps, true, { py: 50, px: -150 });
+      }
+
+      // 详情需要运行
+      detailsRefreshSafeOtherPosition() {
+        const name = this.lastSafeOtherModel.name;
+        this.safeOther(name)
       }
 
       // 点击 正常 摄像头
@@ -775,12 +782,29 @@ const fn = (runScene, inputData = {}, constant = {}) => {
 
         // 清除上个快照
         $on('clear-last-snapShot', this.clearLastSnapShot.bind(this))
+
+        // 黑白 天
+        $on('snapShot-restoreDay', this.restoreDay.bind(this))
       }
 
       // 清除上个快照
       clearLastSnapShot() {
-        if (this.lastSnapShot) runScene.snapshot.set(`${this.lastSnapShot}默认`)
-        core.blueprintFn.doBlueprintFn('白天')
+        if (this.lastSnapShot) {
+          runScene.snapshot.set(`${this.lastSnapShot}默认`)
+        }
+
+      }
+
+      // 黑白 天
+      restoreDay() {
+        const path = window.location.hash
+          .replace("#", "")
+          .replace("/", "")
+          .trim();
+
+        if (path === 'safe' && core.snapShotFn.lastSnapShot) {
+          core.blueprintFn.doBlueprintFn('白天');
+        }
       }
 
       // 快照
@@ -788,19 +812,17 @@ const fn = (runScene, inputData = {}, constant = {}) => {
 
         const name = this.snapShotMap[buildName];
 
-        if (this.lastSnapShot) {
+        // if (this.lastSnapShot) {
 
-          runScene.snapshot.set(`${this.lastSnapShot}默认`);
+        //   core.blueprintFn.doBlueprintFn('白天');
 
-          core.blueprintFn.doBlueprintFn('白天');
+        //   runScene.snapshot.set(`${this.lastSnapShot}默认`);
 
-          this.lastSnapShot = '';
-
-        }
+        //   this.lastSnapShot = '';
+        // }
 
         // 快照
         runScene.snapshot.set(`${name}展开`);
-
 
         core.blueprintFn.doBlueprintFn('夜晚')
 
@@ -1180,10 +1202,14 @@ const fn = (runScene, inputData = {}, constant = {}) => {
 
         // 设置控制器
         $on('set-controls', this.isLock.bind(this))
+
+        // 清空选择的
+        $on('closeSelectedIndex', this.closeSelectedIndex.bind(this));
       }
 
       // 鸟瞰视角
       back() {
+
         // 释放控制器
         core.camera.isLock(true);
         // 聚焦动画
@@ -1200,7 +1226,10 @@ const fn = (runScene, inputData = {}, constant = {}) => {
         core.snapShotFn.clearLastSnapShot();
 
         // 清楚上次点击的名称
-        $send('clear-lastClickWorkShopName', '')
+        $send('clear-lastClickWorkShopName', '');
+
+        // 恢复到白天
+        $send('snapShot-restoreDay');
       }
 
       // 重置选中的索引  选中的门禁 选中的摄像头 清空选中的倒三角

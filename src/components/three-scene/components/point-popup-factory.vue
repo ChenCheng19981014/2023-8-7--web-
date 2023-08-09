@@ -59,7 +59,7 @@ export default {
         areaName: this.id,
         icon: require("./../../../assets/three-scene/three-car-icon.png"),
         arrInfo: [
-          { key: "通行人数", name: "person", value: 365, unit: "辆" },
+          { key: "通行人数", name: "person", value: 365, unit: "人" },
           { key: "员工", name: "staff", value: 10, unit: "人" },
           { key: "相关方", name: "InterestedParty", value: 4, unit: "人" },
           { key: "访客", name: "visitor", value: 4, unit: "人" },

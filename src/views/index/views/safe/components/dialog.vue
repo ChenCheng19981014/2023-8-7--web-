@@ -1,6 +1,6 @@
-
 <style lang="scss" scoped>
 .dialog {
+  z-index: 2;
   position: absolute;
   top: 230px;
   left: 980px;
@@ -16,6 +16,9 @@
     margin-bottom: 13px;
     background-image: url("../../../../../assets/common/monitor-list-header.png");
     background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     .text {
       font-family: "pm";
 
@@ -30,6 +33,9 @@
       -webkit-text-fill-color: transparent;
       font-size: 16px;
     }
+    .close {
+      cursor: pointer;
+    }
   }
   .totast {
     display: flex;
@@ -43,6 +49,7 @@
     .data-item {
       display: flex;
       align-items: center;
+      white-space: nowrap;
       .value {
         font-family: "number";
         color: white;
@@ -78,8 +85,7 @@
 }
 
 .monitor-list {
-  height: 509px;
-  overflow-y: auto;
+  overflow-y: hidden;
   margin-top: 13px;
   .monitor-item {
     margin-bottom: 16px;
@@ -117,12 +123,16 @@
       }
     }
   }
-  .active{
+  .active {
     border: 1px solid rgba(0, 255, 224, 0.64);
-background: linear-gradient(180deg, rgba(7, 131, 250, 0.18) 0%, rgba(7, 131, 250, 0.12) 51.30%, rgba(7, 131, 250, 0.18) 100%);
-    .title{
-        color: #00FFE0;
-
+    background: linear-gradient(
+      180deg,
+      rgba(7, 131, 250, 0.18) 0%,
+      rgba(7, 131, 250, 0.12) 51.3%,
+      rgba(7, 131, 250, 0.18) 100%
+    );
+    .title {
+      color: #00ffe0;
     }
   }
 }
@@ -130,15 +140,23 @@ background: linear-gradient(180deg, rgba(7, 131, 250, 0.18) 0%, rgba(7, 131, 250
 .monitor-list::-webkit-scrollbar {
   width: 0px;
 }
-#common{
-  left:502px;
+#common {
+  left: 510px;
+}
+
+.pagation {
+  width: 100%;
+  margin-top: 16px;
+  justify-content: center;
+  display: flex;
 }
 </style>
 
 <template>
-  <div class="dialog" :id="!fish?'common':''">
+  <div class="dialog" :id="!fish ? 'common' : ''">
     <div class="dialog-title">
       <div class="text">{{ dialogName }}</div>
+      <div class="close el-icon-close" @click="close"></div>
     </div>
     <div class="totast">
       <div class="titles">室内重点监控</div>
@@ -159,7 +177,13 @@ background: linear-gradient(180deg, rgba(7, 131, 250, 0.18) 0%, rgba(7, 131, 250
       </div>
     </div>
     <div class="monitor-list">
-      <div class="monitor-item" :class="item==selectMonitor?'active':''" @click="selectMonitorItem(item)" v-for="(item, index) of monitors" :key="index">
+      <data-empty v-if="monitors.length == 0" border9></data-empty>
+      <div
+        class="monitor-item"
+        :class="item == selectMonitor ? 'active' : ''"
+        v-for="(item, index) of monitors"
+        :key="index"
+      >
         <div class="left-container"></div>
         <div class="right-container">
           <div class="title">综合楼-2F-咖啡厅①</div>
@@ -170,12 +194,16 @@ background: linear-gradient(180deg, rgba(7, 131, 250, 0.18) 0%, rgba(7, 131, 250
       </div>
     </div>
 
+    <div class="pagation">
+      <el-pagination background small layout="prev, pager, next" :total="501">
+      </el-pagination>
+    </div>
     <!-- <monitorDialog @close="removeMonitor" v-if="selectMonitor" :selectMonitor="selectMonitor" /> -->
   </div>
 </template>
 
-
 <script>
+import { $on, $send, $off } from "@/lib/custom-bus";
 import monitorDialog from "./monitor-dialog.vue";
 export default {
   components: {
@@ -186,23 +214,46 @@ export default {
   },
   data() {
     return {
-      selectMonitor: null,
       monitors: [],
     };
   },
+  mounted() {
+    $on("web-dialog", this.threeClose.bind(this));
+  },
   methods: {
+    close() {
+      // 详情弹窗
+      $send("show-safe-other-info", true);
+      $send("refreshSafeOtherPosition");
+
+      // 恢复到白天
+      $send("snapShot-restoreDay");
+      // 恢复默认状态
+      $send("clear-last-snapShot");
+      // 清空选中 光墙
+      $send("set-selected-lightArea", "", true);
+
+      this.$parent.showDialog = false;
+    },
+    threeClose() {
+      // 详情弹窗
+      $send("show-safe-other-info", false);
+
+      // 恢复到白天
+      $send("snapShot-restoreDay");
+      // 恢复默认状态
+      $send("clear-last-snapShot");
+      // 清空选中 光墙
+      $send("set-selected-lightArea", "", true);
+
+      this.$parent.showDialog = false;
+    },
     loadData() {
-      this.monitors = [{}, {}, {}, {}, {}, {}];
+      this.monitors = [{}, {}, {}, {}, {}];
     },
-    removeMonitor(){
-        this.selectMonitor=null
+    removeMonitor() {
+      this.selectMonitor = null;
     },
-    selectMonitorItem(item){
-        this.selectMonitor=null
-        setTimeout(() => {
-            this.selectMonitor=item
-        }, 100);
-    }
   },
   created() {
     this.loadData();

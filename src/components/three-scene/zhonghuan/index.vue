@@ -285,6 +285,12 @@ export default {
       // 不可点击相同的 顶牌2次
       if (this.lastClickWorkShopName === name) return;
 
+      // 关闭弹窗
+      this.currentState === "safe" ? $send("web-dialog") : "";
+
+      // 清空之前的index 倒三角
+      $send("closeSelectedIndex");
+
       // 根据当前的状态 显示对应的看板
       if (this.currentState === "overview") {
         $send("web-click-comprehensive", name);
@@ -425,7 +431,11 @@ export default {
       $on("updatesEnergyId", (id) => (this.energyId = id));
 
       // 倒三角选中 模式
-      $on("close-topCard", () => (this.topCard = -1));
+      $on("close-topCard", () => {
+        this.topCard = -1;
+        console.log("走走走");
+      });
+
       // 门禁 选中 模式
       $on(
         "close-selected-doorControl",
@@ -485,6 +495,8 @@ export default {
       // 设置控制器
       $send("set-controls", true);
 
+      $send("web-dialog");
+
       this.lastClickWorkShopName = "";
     },
 
@@ -529,6 +541,9 @@ export default {
 
     //  点击 摄像机图标
     selectedCameraFn(info, index, e) {
+      // 关闭弹窗
+      this.currentState === "safe" ? $send("web-dialog") : "";
+
       const { id, state } = info;
       // 前端  点击显示对应看板 摄像头
       $send("web-click-camera", id);
@@ -536,6 +551,7 @@ export default {
       $send("web-click-camera-ai", id);
 
       this.lastClickWorkShopName = "";
+
       // 报警不选中
       if (state === "error") return;
       // 选中样式
@@ -549,6 +565,7 @@ export default {
       $send("web-click-door-control", name);
       this.lastClickWorkShopName = "";
     },
+
     // 点击楼栋详情
     buildDetails(name) {
       $send("set-selected-snapshot", name);
@@ -662,6 +679,9 @@ export default {
     selectWorkShop(workShopName, e, index) {
       const placeName = workShopName.replace("点", "");
 
+      // 清除上个快照
+      $send("clear-last-snapShot");
+
       // 区域的动画
       $send("camera-anima-zhonghuan", placeName);
 
@@ -670,9 +690,6 @@ export default {
 
       // 弹出的 样式
       this.topCard = index;
-
-      // 清除上个快照
-      $send("clear-last-snapShot");
 
       if (this.lastClickWorkShopName === workShopName) return;
 
