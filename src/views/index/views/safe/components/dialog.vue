@@ -218,6 +218,7 @@ export default {
     };
   },
   mounted() {
+    // 3d需要主动关闭该弹窗
     $on("web-dialog", this.threeClose.bind(this));
   },
   methods: {
